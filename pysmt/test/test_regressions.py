@@ -440,5 +440,19 @@ class TestRegressions(TestCase):
         script = parser.get_script(buffer_)
         self.assertIsNotNone(script)
 
+    def test_parse_exception(self):
+        from pysmt.exceptions import PysmtSyntaxError
+        smtlib_input = "(declare-const x x x Int)" +\
+                       "(check-sat)"
+        parser = SmtLibParser()
+        buffer_ = cStringIO(smtlib_input)
+        try:
+            parser.get_script(buffer_)
+            self.assertFalse(True)
+        except PysmtSyntaxError as ex:
+            self.assertEqual(ex.pos_info[0], 0)
+            self.assertEqual(ex.pos_info[1], 19)
+
+
 if __name__ == "__main__":
     main()
