@@ -157,10 +157,14 @@ class Tokenizer(object):
     def __init__(self, handle, interactive=False):
         if not interactive:
             # reads char-by-char
-            # self.reader = itertools.chain.from_iterable(handle)
-            self.reader = self.char_iterator(handle)
-            self.__col_cnt = 0
-            self.__row_cnt = 0
+            if __debug__:
+                self.reader = self.char_iterator(handle)
+                self.__col_cnt = 0
+                self.__row_cnt = 0
+            else:
+                self.reader = itertools.chain.from_iterable(handle)
+                self.__col_cnt = None
+                self.__row_cnt = None
         else:
             self.reader = interactive_char_iterator(handle)
             self.__col_cnt = None
@@ -731,7 +735,7 @@ class SmtLibParser(object):
             if not tk.startswith(":"):
                 raise PysmtSyntaxError("Annotations keyword should start with"
                                        " colon! Offending token: '%s'" % tk,
-                                       token.pos_info)
+                                       tokens.pos_info)
             keyword = tk[1:]
             tk = tokens.consume()
             value = None
